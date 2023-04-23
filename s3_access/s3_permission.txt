@@ -1,0 +1,7 @@
+arn:aws:iam::174223974159:root
+
+arn:aws:s3:::cloud-comp-raw-data-bucket
+
+arn:aws:iam::842274941072:root
+
+arn:aws:s3:::cloud-comp-raw-data-bucket

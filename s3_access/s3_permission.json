@@ -1,0 +1,28 @@
+{
+  "Id": "Policy1682218291518",
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1682218248629",
+      "Action": "s3:*",
+      "Effect": "Allow",
+      "Resource": "arn:aws:s3:::cloud-comp-raw-data-bucket",
+      "Principal": {
+        "AWS": [
+          "arn:aws:iam::174223974159:root"
+        ]
+      }
+    },
+    {
+      "Sid": "Stmt1682218272851",
+      "Action": "s3:*",
+      "Effect": "Allow",
+      "Resource": "arn:aws:s3:::cloud-comp-raw-data-bucket/*",
+      "Principal": {
+        "AWS": [
+          "arn:aws:iam::174223974159:root"
+        ]
+      }
+    }
+  ]
+}
