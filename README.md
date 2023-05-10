@@ -6,6 +6,8 @@ You can view login info in /s3_access directory
 
 s3 raw bucket refer video: https://www.youtube.com/watch?v=eeRl5bjf9Bs
 
+Kaggle link: https://www.kaggle.com/datasets/syuzai/perth-house-prices
+
 Our s3 raw bucket name: **cloud-comp-raw-data-bucket**
 
 ## Requirement:
