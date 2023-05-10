@@ -8,6 +8,8 @@ s3 raw bucket refer video: https://www.youtube.com/watch?v=eeRl5bjf9Bs
 
 Kaggle link: https://www.kaggle.com/datasets/syuzai/perth-house-prices
 
+Kaggle refer project: https://www.kaggle.com/code/vladshatrovsky/eda-visualizing-modeling-house-price-predict
+
 Our s3 raw bucket name: **cloud-comp-raw-data-bucket**
 
 ## Requirement:
