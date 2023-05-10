@@ -62,7 +62,7 @@ pipeline work split:
 - Input: data_cleaned (csv) 
 - Output: features (csv)
 
-5. Model Selection(Creating Preprocessor + Models building+ Model Test)?
+5. Model Selection(Creating Preprocessor + Models building+ Model Test)
 - Input: features (csv)
 - Output: test results (csv), best_model_name(str)
 
