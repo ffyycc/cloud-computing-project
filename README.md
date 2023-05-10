@@ -40,13 +40,44 @@ to ensure their code meets quality standards
 
 Due date: May 30
 
-### Week 1 May 10 - May 17
-Finish Model (ipynb) (Linear Regression, decision Tree, RF, KNN, XGBooost...)
+### Week 1 May 10 - May 21 (due May 21)
+Finish Model (ipynb) (Linear Regression, decision Tree, RF, KNN, XGBooost...) -> complete
 Finish pipeline (Docker) -> plt., 
 
-### Week 2 May 17 - May 24
-Model Deployment (EC2, ECS, or Lambda)
-Configuration Files, Logging, and Monitoring
+pipeline work split:
 
-### Week3 May 24 - May 30
+1. Preprocessing (missing data, data type, save dataset)  
+- Input: data_raw (csv) 
+- Output: data_preprocessed (csv) 
+
+2. EDA
+- Input: data_preprocessed (csv) 
+- Output: figures, summary_table to path (outputs/eda/)
+
+3. Cleaning(remove outliers) 
+- Input: data_preprocessed (csv) 
+- Output: data_cleaned (csv) 
+
+4. Feature_generation(generate features)
+- Input: data_cleaned (csv) 
+- Output: features (csv)
+
+5. Model Selection(Creating Preprocessor + Models building+ Model Test)
+- Input: features (csv)
+- Output: test results (csv), best_model_name(str)
+
+6. Model Tuning (Tune random forest)
+- Input: best_model_name
+- model_results(csv), model (pkl)
+
+7. Evaluation (Draw Graph + Save Graph)
+- Input: model_results (csv)
+- Output: graph as jpg
+
+### Week 2 May 21 - May 28
+Model Deployment (EC2, ECS, ERS, S3, or Lambda)
+Configuration Files, Logging, and Monitoring
+Diagram + Price Estimation
+
+### Week3 May 28 - May 30
 Write Report
