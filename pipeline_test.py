@@ -17,6 +17,10 @@ import category_encoders as ce
 
 # Library
 import argparse
+import datetime
+import logging.config
+from pathlib import Path
+
 import yaml
 
 from sklearn.model_selection import train_test_split
@@ -25,6 +29,8 @@ import src.model_tuning as mt
 
 
 
+logging.config.fileConfig("config/logging/local.conf")
+logger = logging.getLogger("pipeline")
 
 
 
@@ -44,7 +50,16 @@ if __name__ == "__main__":
     with open(args.config, "r") as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
 
+    run_config = config.get("run_config", {})
 
+    # Set up output directory for saving artifacts
+    now = int(datetime.datetime.now().timestamp())
+    artifacts = Path(run_config.get("output", "runs")) / str(now)
+    artifacts.mkdir(parents=True)
+
+    # Save config file to artifacts directory for traceability
+    with (artifacts / "config.yaml").open("w") as f:
+        yaml.dump(config, f)
 
 
 
@@ -110,7 +125,7 @@ X_train, X_test, y_train, y_test = train_test_split(features, y, test_size=0.2, 
 X_train_transformed = preprocessor.fit_transform(X_train, y_train)
 
 # Transform the testing data
-X_test_transformed = preprocessor.transform(X_test)
+X_test_transformed = preprocessor.fit_transform(X_test, y_test)
 
 # Create pandas DataFrames from the transformed data
 columns = ['SUBURB', 'BEDROOMS', 'BATHROOMS', 'GARAGE', 'LAND_AREA', 'FLOOR_AREA',
@@ -125,9 +140,12 @@ X_test_transformed = pd.DataFrame(X_test_transformed, columns=columns)
 rf_model, rf_par = mt.random_forest_tuning(X_train_transformed, y_train,config["model_tuning"])
 xgb_model, xgb_par = mt.xgboost_tuning(X_train_transformed, y_train,config["model_tuning"])
 lr_model, lr_par = mt.linear_ridge_tuning(X_train_transformed, y_train,config["model_tuning"])
-metrics_df, best_model = mt.model_comparison(rf_model, xgb_model, lr_model, X_test_transformed, y_test, config["model_tuning"])
+metrics_df, best_model, best_model_name = mt.model_comparison(rf_model, xgb_model, lr_model, X_test_transformed, y_test, config["model_tuning"])
 
 print(metrics_df)
+
+mt.save_metrics(metrics_df, artifacts)
+mt.save_model(best_model, artifacts / "best_model_object.pkl")
 
 
 

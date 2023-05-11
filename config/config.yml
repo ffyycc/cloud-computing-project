@@ -28,6 +28,6 @@ model_tuning:
 
   verbose: 1
 
-  metrics: ["mean_squared_error", "mean_absolute_error", "r2_score"]
+  metrics: ["root_mean_squared_error", "mean_absolute_error", "r2_score"]
 
-  best_model_metric: "mean_squared_error"
+  best_model_metric: "root_mean_squared_error"

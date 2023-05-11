@@ -1,7 +1,9 @@
 # Library
 import argparse
+import datetime
+import logging.config
+from pathlib import Path
 import yaml
-import logging
 
 from sklearn.model_selection import train_test_split
 
@@ -32,6 +34,16 @@ if __name__ == "__main__":
         else:
             logger.info("Configuration file loaded from %s", args.config)
 
+    run_config = config.get("run_config", {})
+
+    # Set up output directory for saving artifacts
+    now = int(datetime.datetime.now().timestamp())
+    artifacts = Path(run_config.get("output", "runs")) / str(now)
+    artifacts.mkdir(parents=True)
+
+    # Save config file to artifacts directory for traceability
+    with (artifacts / "config.yaml").open("w") as f:
+        yaml.dump(config, f)
 
 
 
@@ -47,7 +59,9 @@ rf_model, rf_par = mt.random_forest_tuning(X_train_transformed, y_train,config["
 xgb_model, xgb_par = mt.xgboost_tuning(X_train_transformed, y_train,config["model_tuning"])
 lr_model, lr_par = mt.linear_ridge_tuning(X_train_transformed, y_train,config["model_tuning"])
 metrics_df, best_model = mt.model_comparison(rf_model, xgb_model, lr_model, X_test, y_test, config["model_tuning"])
-
+# Save the metrics and best model
+mt.save_metrics(metrics_df, artifacts)
+mt.save_model(best_model, artifacts / "best_model_object.pkl")
 
 
 

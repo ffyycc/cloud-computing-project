@@ -40,7 +40,7 @@ to ensure their code meets quality standards
 
 Due date: May 30
 
-### Week 1 May 10 - May 21 (due May 21)
+### Week 1 May 10 - May 19 (due May 19)
 Finish Model (ipynb) (Linear Regression, decision Tree, RF, KNN, XGBooost...) -> complete
 Finish pipeline (Docker) -> plt., 
 
@@ -62,19 +62,17 @@ pipeline work split:
 - Input: data_cleaned (csv) 
 - Output: features (csv)
 
-5. Model Selection(Creating Preprocessor + Models building+ Model Test)
-- Input: features (csv)
-- Output: test results (csv), best_model_name(str)
+5. Model Tuning (Tune random forest, xgboost, and linear model with Ridge models)
+- Input: features_after_transformation
+- Output: metrics_df, best_model (pkl)
 
-6. Model Tuning (Tune random forest)
-- Input: best_model_name
-- model_results(csv), model (pkl)
-
-7. Evaluation (Draw Graph + Save Graph)
+6. Evaluation (Draw Graph + Save Graph)
 - Input: model_results (csv)
 - Output: graph as jpg
 
-### Week 2 May 21 - May 28
+7. Inference
+
+### Week 2 May 19 - May 28
 Model Deployment (EC2, ECS, ERS, S3, or Lambda)
 Configuration Files, Logging, and Monitoring
 Diagram + Price Estimation
