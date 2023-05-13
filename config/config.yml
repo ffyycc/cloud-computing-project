@@ -5,9 +5,44 @@ run_config:
   description: House price prediction in Perth (located in Western Australia).
   dependencies: requirements.txt
   output: artifacts
+  output_config: config/
+  output_data: data/
 
 
+preprocess_dataset:
+  quantile: 0.75
 
+clean_data:
+  outlier:
+    upper_threshold:
+      price: 1500000
+      land_area: 1500
+      nearest_stn_dist: 10000
+      nearest_sch_dist: 4
+    lower_threshold:
+      build_year: 1950
+
+generate_features:
+  other_room_multiplier: 0.25
+
+split_data:
+  test_size: 0.2
+  random_state: 21
+  target: PRICE
+  columns:
+    - SUBURB
+    - BEDROOMS
+    - BATHROOMS
+    - GARAGE
+    - LAND_AREA
+    - FLOOR_AREA
+    - NEAREST_STN
+    - LATITUDE
+    - NEAREST_SCH
+    - OTHERS_ROOMS_AREA
+    - GARAGE_AREA
+    - BATHROOMS_AREA
+    - BEDROOMS_AREA
 
 
 model_tuning:
