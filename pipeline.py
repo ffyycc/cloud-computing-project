@@ -8,7 +8,6 @@ import pandas as pd
 
 import src.preprocess_data as pp
 import src.clean_data as cd
-import src.analysis as an
 import src.generate_features as gf
 import src.model_tuning as mt
 import src.generate_preprocessor as gp
@@ -61,11 +60,9 @@ if __name__ == "__main__":
     pp.save_dataset(all_data, data_dir / "house_preprocessed.csv")
     logger.info("Finished preprocessing the dataset.")
 
-    # EDA
-    figures = artifacts / "figures&tables"
-    figures.mkdir()  # Replace with your desired directory
-    an.save_summary_table(all_data, figures)
-    an.save_figures(all_data, config['analysis'], figures) 
+    ####################################
+    # TODO: add EDA here (拽姐 part)
+    ####################################
     
     # clean the data
     cleaned_data = cd.clean_dataset(all_data, config["clean_data"])
@@ -94,8 +91,8 @@ if __name__ == "__main__":
     mt.save_model(best_model, artifacts / "best_model_object.pkl")
     
     # Model evaluation
-    model_results = me.evaluate_model(best_model, X_test_transformed, y_test, config["model_evaluation"]["evaluate_model"])
-    fig_dict = me.plot_results(model_results, config["model_evaluation"]["plot_results"])
+    model_results = me.evaluate_model(best_model, X_test_transformed, y_test)
+    fig_dict = me.plot_results(model_results)
     me.save_graphs(fig_dict, artifacts / config["model_evaluation"]["plot_results"]["output_dir"])
 
 
