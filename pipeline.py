@@ -12,6 +12,7 @@ import src.generate_features as gf
 import src.model_tuning as mt
 import src.generate_preprocessor as gp
 import src.split_data as sd
+import src.model_evaluation as me
 
 logging.config.fileConfig("config/logging/local.conf")
 logger = logging.getLogger("pipeline")
@@ -88,7 +89,11 @@ if __name__ == "__main__":
     # Save the metrics and best model
     mt.save_metrics(metrics_df, artifacts)
     mt.save_model(best_model, artifacts / "best_model_object.pkl")
-
+    
+    # Model evaluation
+    model_results = me.evaluate_model(best_model, X_test_transformed, y_test, config["model_evaluation"]["evaluate_model"])
+    fig_dict = me.plot_results(model_results, config["model_evaluation"]["plot_results"])
+    me.save_graphs(fig_dict, artifacts / config["model_evaluation"]["plot_results"]["output_dir"])
 
 
 
