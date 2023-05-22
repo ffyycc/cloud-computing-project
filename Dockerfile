@@ -8,7 +8,7 @@ COPY src /app/src
 COPY requirements.txt /app/requirements.txt
 COPY pipeline.py /app/pipeline.py
 COPY config /app/config
-
+COPY data /app/data
 
 # install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
