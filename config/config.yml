@@ -22,6 +22,18 @@ clean_data:
     lower_threshold:
       build_year: 1950
 
+analysis:
+  pairplot_columns: 
+    - PRICE
+    - FLOOR_AREA
+    - BUILD_YEAR
+    - CBD_DIST
+    - NEAREST_STN_DIST
+    - POSTCODE
+    - LATITUDE
+    - LONGITUDE
+    - NEAREST_SCH_DIST
+
 generate_features:
   other_room_multiplier: 0.25
 
