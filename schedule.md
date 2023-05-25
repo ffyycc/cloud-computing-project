@@ -77,5 +77,16 @@ Model Deployment (EC2, ECS, ERS, S3, or Lambda)
 Configuration Files, Logging, and Monitoring
 Diagram + Price Estimation
 
+### S3 -> input(csv) -> SQS -> lambda(?) -> ECS(docker) -> 
+
+### ECS (Deploy Docker)
+
+### User interface
+StreamLib (get user input) -> df() -> model -> predict result
+
+### EC2(?)
+
+
+
 ### Week3 May 28 - May 30
 Write Report
