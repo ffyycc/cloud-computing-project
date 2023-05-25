@@ -88,3 +88,9 @@ model_evaluation:
     kde_figsize: [20, 8]
     scatter_figsize: [20, 8]
     output_dir: 'plots'
+
+
+aws:
+  upload: False
+  bucket_name: cloud_project_bucket
+  prefix: project/

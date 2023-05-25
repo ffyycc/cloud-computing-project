@@ -97,7 +97,7 @@ def model_comparison(random_forest_model, xgboost_model, linear_ridge_model, tes
     :param target_test: Test target
     :param config: Configuration dictionary for metrics
 
-    :return: Metrics results and best model
+    :return: Metrics results, best model, best model name, and other models' name
     """
     try:
         models = {'Random Forest': random_forest_model, 'XGBoost': xgboost_model, 'Linear Ridge': linear_ridge_model}
@@ -129,7 +129,9 @@ def model_comparison(random_forest_model, xgboost_model, linear_ridge_model, tes
 
         best_model = models[best_model_name]
         logging.info('Model comparison completed successfully')
-        return metrics_df, best_model, best_model_name
+        
+        other_models_name = model_names.remove(best_model_name)
+        return metrics_df, best_model, best_model_name, other_models_name
     except Exception as e:
         logging.error('Error in model comparison: %s', e)
         return None, None

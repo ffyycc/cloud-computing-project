@@ -14,6 +14,8 @@ import src.model_tuning as mt
 import src.generate_preprocessor as gp
 import src.split_data as sd
 import src.model_evaluation as me
+import src.aws_utils as aws
+
 
 logging.config.fileConfig("config/logging/local.conf")
 logger = logging.getLogger("pipeline")
@@ -88,18 +90,28 @@ if __name__ == "__main__":
     rf_model, rf_par = mt.random_forest_tuning(X_train_transformed, y_train,config["model_tuning"])
     xgb_model, xgb_par = mt.xgboost_tuning(X_train_transformed, y_train,config["model_tuning"])
     lr_model, lr_par = mt.linear_ridge_tuning(X_train_transformed, y_train,config["model_tuning"])
-    metrics_df, best_model, best_model_name = mt.model_comparison(rf_model, xgb_model, lr_model, X_test_transformed, y_test, config["model_tuning"])
-    # Save the metrics and best model
+    metrics_df, best_model, best_model_name, other_models_name = mt.model_comparison(rf_model, xgb_model, lr_model, X_test_transformed, y_test, config["model_tuning"])
+    # Save the metrics and models
     mt.save_metrics(metrics_df, artifacts)
-    mt.save_model(best_model, artifacts / "best_model_object.pkl")
-    
+    best_model_file_name = "best_model_object_"+best_model_name+".pkl"
+    mt.save_model(best_model, artifacts / best_model_file_name)
+    for model_name in other_models_name:
+        if model_name == 'Random Forest':
+            mt.save_model(rf_model, artifacts / "rf_model_object.pkl")
+        elif model_name == 'XGBoost':
+            mt.save_model(xgb_model, artifacts / "xgb_model_object.pkl")
+        elif model_name == 'Linear Ridge':
+            mt.save_model(lr_model, artifacts / "lr_model_object.pkl")
+
     # Model evaluation
     model_results = me.evaluate_model(best_model, X_test_transformed, y_test)
     fig_dict = me.plot_results(model_results)
     me.save_graphs(fig_dict, artifacts / config["model_evaluation"]["plot_results"]["output_dir"])
 
 
-
+    # Upload all artifacts to S3
+    aws_config = config.get("aws")
+    aws.upload_artifacts(artifacts, aws_config)
 
 
 
