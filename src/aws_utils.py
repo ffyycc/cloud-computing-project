@@ -2,12 +2,13 @@ import os
 import logging
 from pathlib import Path
 import boto3
+import pdb
 
 
 logger = logging.getLogger(__name__)
 
 
-def upload_artifacts(artifacts: Path, config: dict) -> list[str]:
+def upload_artifacts(artifacts, config):
     """Upload all the artifacts in the specified directory to S3
 
     Args:
@@ -19,8 +20,7 @@ def upload_artifacts(artifacts: Path, config: dict) -> list[str]:
     """
     # Retrieve the S3 configuration from the config dictionary
     upload = config["upload"]
-    bucket_name = config["bucket_name"]
-    prefix = config["prefix"]
+    bucket_name = config["bucket_model_artifacts"]
 
     # If the upload flag is set to False, skip the upload process
     if not upload:
@@ -40,7 +40,7 @@ def upload_artifacts(artifacts: Path, config: dict) -> list[str]:
             for file in files:
                 file_path = os.path.join(root, file)
                 # Create the S3 key by replacing the local artifacts path with the prefix
-                s3_key = prefix + file_path.replace(str(artifacts), "", 1).lstrip(
+                s3_key = file_path.replace(str(artifacts), "", 1).lstrip(
                     os.sep
                 )
 
@@ -51,7 +51,7 @@ def upload_artifacts(artifacts: Path, config: dict) -> list[str]:
                 uploaded_uri = "s3://%s/%s" % (bucket_name, s3_key)
                 uploaded_uris.append(uploaded_uri)
 
-                logger.debug("Successfully uploaded %s to %s", file_path, uploaded_uri)
+                # logger.debug("Successfully uploaded %s to %s", file_path, uploaded_uri)
 
     except Exception as e:
         logger.error("Failed to upload files: %s", str(e))
@@ -60,3 +60,13 @@ def upload_artifacts(artifacts: Path, config: dict) -> list[str]:
     logger.info("All files have been uploaded successfully.")
 
     return uploaded_uris
+
+
+def download_s3(bucket_name, s3_key, local_file):
+    s3 = boto3.client('s3')
+    
+    try:
+        s3.download_file(bucket_name, s3_key, str(local_file))
+        print(f"Download successful. File downloaded from bucket '{bucket_name}' with key '{s3_key}' to '{local_file}'.")
+    except Exception as e:
+        print(f"Download failed. Exception: {e}")
