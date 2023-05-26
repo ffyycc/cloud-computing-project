@@ -168,11 +168,11 @@ Follow the steps below to build and run the Docker image for the app and tests:
 ### Build the Docker Image for the App
 
 ```bash
-docker build -t appimage -f dockerfiles/DockerfileApp .
+docker build -t appimage -f Dockerfile . 
 ```
 
 ### Run the entire model pipeline
 
 ```bash
-docker run -v ~/.aws:/root/.aws -e AWS_PROFILE=personal-sso-admin 
+docker run appimage -v ~/.aws:/root/.aws -e AWS_PROFILE=personal-sso-admin
 ```

@@ -9,6 +9,7 @@ from sklearn.ensemble import RandomForestRegressor
 from xgboost import XGBRegressor
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+import pdb
 
 
 logger = logging.getLogger(__name__)
@@ -130,8 +131,10 @@ def model_comparison(random_forest_model, xgboost_model, linear_ridge_model, tes
         best_model = models[best_model_name]
         logging.info('Model comparison completed successfully')
         
-        other_models_name = model_names.remove(best_model_name)
-        return metrics_df, best_model, best_model_name, other_models_name
+        other_models_name = set(model_names)
+        
+        other_models_name.remove(best_model_name)
+        return metrics_df, best_model, best_model_name, list(other_models_name)
     except Exception as e:
         logging.error('Error in model comparison: %s', e)
         return None, None
