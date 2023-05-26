@@ -6,13 +6,30 @@ from sklearn.compose import ColumnTransformer
 import category_encoders as ce
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
+import pdb
 
-
-def present_interface(model):
+def present_interface(model,preprocessor):
 
     st.title("We can Make House Price Prediction in Perth for You!")
 
     st.sidebar.header("User Input Parameters")
+
+        
+    user_info = {
+        'SUBURB': None,
+        'BEDROOMS': None,
+        'BATHROOMS': None,
+        'GARAGE': None,
+        'LAND_AREA': None,
+        'FLOOR_AREA': None,
+        'NEAREST_STN': None,
+        'LATITUDE': None,
+        'NEAREST_SCH': None,
+        'OTHERS_ROOMS_AREA': None,
+        'GARAGE_AREA': None,
+        'BATHROOMS_AREA': None,
+        'BEDROOMS_AREA': None,
+    }
 
     # Define your sliders with keys
     sliders = {
@@ -190,47 +207,31 @@ def present_interface(model):
                                                        'YOUTH FUTURES COMMUNITY SCHOOL'])
 
     ############################################## UI part above ##############################################
+    
+    # example ['Landsdale',3,2,2,420,164,'Greenwood Station',-31.81008664,'LANDSDALE CHRISTIAN SCHOOL',41.0,24.6,24.6,30.75]
+    # Set the constant values for other features
+    other_values = {
+        'SUBURB': 'Landsdale',
+        'NEAREST_STN': 'Greenwood Station',
+        'LATITUDE': -31.95,
+        'NEAREST_SCH': 'LANDSDALE CHRISTIAN SCHOOL',
+        'ADDRESS': ' ',
+        'PRICE': 0,
+        'DATE_SOLD': ' '
+    }
 
-    # # example ['Landsdale',3,2,2,420,164,'Greenwood Station',-31.81008664,'LANDSDALE CHRISTIAN SCHOOL',41.0,24.6,24.6,30.75]
-    # # Set the constant values for other features
-    # other_values = {
-    #     'SUBURB': 'Landsdale',
-    #     'NEAREST_STN': 'Greenwood Station',
-    #     'LATITUDE': -31.81008664,
-    #     'NEAREST_SCH': 'LANDSDALE CHRISTIAN SCHOOL'
-    # }
+    user_info.update(sliders)
+    user_info.update(other_values)
+    
+    row_df = pd.DataFrame.from_records([user_info])
+    
+    pipeline = Pipeline(steps=[('preprocessor', preprocessor),('model', model)])
 
-    # # Combine slider values with the other values
-    # user_input = {**other_values, **sliders}
+    # Now you can use user_input_df for prediction
+    price = pipeline.predict(row_df)[0]
 
-    # # Convert the dictionary to a DataFrame
-    # # Note: need to put user_input inside [] to make it a 2D structure
-    # user_input_df = pd.DataFrame([user_input])
-    # numerical_transformer = MinMaxScaler(feature_range=(0,1))
-    # categorical_transformer = Pipeline(steps=[('cat_encoder', ce.CatBoostEncoder())])
-
-    # # Define num_cols and cat_cols
-    # num_cols = ['BEDROOMS', 'BATHROOMS', 'GARAGE', 'LAND_AREA', 'FLOOR_AREA', 'LATITUDE', 'OTHERS_ROOMS_AREA', 'GARAGE_AREA', 'BATHROOMS_AREA', 'BEDROOMS_AREA']
-    # cat_cols = ['SUBURB', 'NEAREST_STN', 'NEAREST_SCH']
-
-    # preprocessor = ColumnTransformer(
-    #     transformers=[
-    #         ('num', numerical_transformer, num_cols),
-    #         ('cat', categorical_transformer, cat_cols)
-    #     ]
-    # )
-
-    # # Fit and transform user_input_df with the preprocessor
-    # user_input_preprocessed = preprocessor.transform(user_input_df)
-
-    # pipeline = Pipeline(steps=[('preprocessor', preprocessor),('model', model)])
-
-    # # Now you can use user_input_df for prediction
-    # price = pipeline.predict(user_input_preprocessed)
-    # TODO: change default value to predicted price
-    price = 666.66
-    print("price:", price)
-
+    print("price:",price)
+    
     ############################################### UI part below ###############################################
     st.header("Housing Information:")
 
@@ -273,6 +274,6 @@ def present_interface(model):
             font-weight: bold;
             text-shadow: 3px 3px 6px #FF69B4;
         ">
-            {price:,.2f}
+            $ {price:,.2f}
         </div>
     """, unsafe_allow_html=True)

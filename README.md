@@ -174,5 +174,6 @@ docker build -t appimage -f Dockerfile .
 ### Run the entire model pipeline
 
 ```bash
-docker run appimage -v ~/.aws:/root/.aws -e AWS_PROFILE=personal-sso-admin
+docker run -v ~/.aws:/root/.aws -e AWS_PROFILE=personal-sso-admin appimage
 ```
+

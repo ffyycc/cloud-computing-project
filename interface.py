@@ -58,19 +58,22 @@ def main():
     artifacts = Path(run_config.get("output", "runs"))
     
     model_s3_key = config["aws"]["selected_model_key"]
+    processor_s3_key = config["aws"]["selected_preprocessor_key"]
     
     @st.cache_resource
     def load_model():
         print("loading artifacts from: ", artifacts.absolute())
-        # Download files from S3
+        # Download model and preprocessor from S3
         aws.download_s3(BUCKET_NAME, model_s3_key, artifacts / model_s3_key)
+        aws.download_s3(BUCKET_NAME, processor_s3_key, artifacts / processor_s3_key)
         
         # Load model from the downloaded file
         model = joblib.load(artifacts / model_s3_key)
+        preprocessor = joblib.load(artifacts / processor_s3_key)
         
-        return model
+        return model, preprocessor
     
-    model = load_model()
+    model,preprocessor = load_model()
     
     # TODO: change hard code here:
     
@@ -78,7 +81,7 @@ def main():
     # TODO: feed user input to scores
 
     # Present user interface
-    pi.present_interface(model)
+    pi.present_interface(model,preprocessor)
 
 if __name__ == "__main__":
     main()

@@ -27,7 +27,7 @@ def split_data(data: Any, preprocessor: Any, config: dict) -> tuple:
     # Transform the testing data
     X_test_transformed = preprocessor.transform(X_test)
 
-    return X_train_transformed, X_test_transformed, y_train, y_test
+    return X_train_transformed, X_test_transformed, y_train, y_test, preprocessor
 
 
 def save_splited_data(X_train_transformed: np.ndarray, X_test_transformed: np.ndarray, y_train: np.ndarray, y_test: np.ndarray, data_dir: Path):
