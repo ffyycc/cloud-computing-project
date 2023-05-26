@@ -88,3 +88,13 @@ model_evaluation:
     kde_figsize: [20, 8]
     scatter_figsize: [20, 8]
     output_dir: 'plots'
+
+
+aws:
+  upload: True
+  bucket_raw: cloud-project-raw
+  bucket_model_artifacts: cloud-project-models
+  random_forest_model_name: rf_model_object.pkl
+  logistic_regression_model_name: lr_model_object.pkl
+  xgboost_model_name: best_model_object_XGBoost.pkl
+  selected_model_key: best_model_object_XGBoost.pkl
