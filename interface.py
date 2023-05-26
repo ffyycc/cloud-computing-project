@@ -72,11 +72,13 @@ def main():
     
     model = load_model()
     
+    # TODO: change hard code here:
+    
+    
     # TODO: feed user input to scores
-    scores = []
 
     # Present user interface
-    pi.present_interface(scores)
+    pi.present_interface(model)
 
 if __name__ == "__main__":
     main()
