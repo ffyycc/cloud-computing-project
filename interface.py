@@ -13,7 +13,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 
 import src.aws_utils as aws
-import src.generate_features as gf
+import src.present_interface as pi
 
 import streamlit as st
 
@@ -25,11 +25,6 @@ artifacts = Path() / "artifacts"
 BUCKET_NAME = os.getenv("BUCKET_NAME", "cloud-project-models")
 # ARTIFACTS_PREFIX = os.getenv("ARTIFACTS_PREFIX", "artifacts/")
 CONFIG_REF = os.getenv("CONFIG_REF", "config/config.yml")
-
-# MODELS = {
-#     "DecisionTreeClassifier": DecisionTreeClassifier,
-#     "RandomForestClassifier": RandomForestClassifier,
-# }
 
 
 def load_config(config_ref: str) -> dict:
@@ -62,13 +57,6 @@ def main():
     # Set up output directory for saving artifacts
     artifacts = Path(run_config.get("output", "runs"))
     
-    # if not artifacts.exists():
-    #     artifacts.mkdir(parents=True) 
-    #     logger.info("Saving artifacts to %s", artifacts.absolute())
-        
-    #     # Save the model to artifacts directory
-    #     aws_config = config["aws"]
-    #     aws.download_s3(artifacts,aws_config)
     model_s3_key = config["aws"]["selected_model_key"]
     
     @st.cache_resource
@@ -84,18 +72,11 @@ def main():
     
     model = load_model()
     
-        
-    # # load user input data
-    # df_user = si.get_user_input(config["default_inputs"])
-    
-    # # Enrich dataset with features for model training; save to disk
-    # features = gf.generate_features(df_user, config["generate_features"])
-    
+    # TODO: feed user input to scores
+    scores = []
 
-    # scores = mp.make_prediction(features, rf, lg, config["make_prediction"])
-
-    # # Present user interface
-    # pi.present_interface(scores, config["present_interface"],config["make_prediction"],config["default_inputs"])
+    # Present user interface
+    pi.present_interface(scores)
 
 if __name__ == "__main__":
     main()
