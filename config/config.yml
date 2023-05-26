@@ -98,3 +98,4 @@ aws:
   logistic_regression_model_name: lr_model_object.pkl
   xgboost_model_name: best_model_object_XGBoost.pkl
   selected_model_key: best_model_object_XGBoost.pkl
+  selected_preprocessor_key: fitted_preprocessor.pkl

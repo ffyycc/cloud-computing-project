@@ -4,6 +4,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.preprocessing import MinMaxScaler
 from typing import List
+import pickle
 
 def generate_preprocessor(num_cols: List[str], cat_cols: List[str]) -> ColumnTransformer:
     """
@@ -35,3 +36,8 @@ def generate_preprocessor(num_cols: List[str], cat_cols: List[str]) -> ColumnTra
     )
 
     return preprocessor
+
+
+def save_preprocessor(preprocessor, filename):
+    with open(filename, 'wb') as f:
+        pickle.dump(preprocessor, f)
