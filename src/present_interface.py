@@ -6,7 +6,12 @@ from sklearn.compose import ColumnTransformer
 import category_encoders as ce
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
+from PIL import Image
+import base64
 
+def get_image_b64(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode('utf-8')
 
 def present_interface(model,preprocessor):
     user_info = {
@@ -109,13 +114,66 @@ def present_interface(model,preprocessor):
 
     # Show house price
     st.header("Predicted House Price: ")
-    st.markdown(f"""
-        <div style="
-            color: #ea80fc;
-            font-size: 40px;
-            font-weight: bold;
-            text-shadow: 3px 3px 6px #FF69B4;
-        ">
-            $ {price:,.2f}
-        </div>
-    """, unsafe_allow_html=True)
+    
+    # Define the levels
+    levels = ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5', 'Level 6', 'Level 7']
+
+    # Define corresponding images
+    img_dict = {
+        'Level 1': 'src/img/level1.png',
+        'Level 2': 'src/img/level2.png',
+        'Level 3': 'src/img/level3.png',
+        'Level 4': 'src/img/level4.png',
+        'Level 5': 'src/img/level5.png',
+        'Level 6': 'src/img/level6.png',
+        'Level 7': 'src/img/level7.png',
+    }
+
+    # Add a selectbox to choose level:
+    if price <= 400000:
+        selected_level = 'Level 1'
+    
+    elif 400000 <= price < 500000:
+        selected_level = 'Level 2'
+    
+    elif 500000 <= price < 600000:
+        selected_level = 'Level 3'
+    elif 600000 <= price < 700000:
+        selected_level = 'Level 4'
+    elif 700000 <= price < 5000000:
+        selected_level = 'Level 5'
+    elif 5000000 <= price < 6500000:
+        selected_level = 'Level 6'
+    else:
+        selected_level = 'Level 7'
+        
+    # Display the corresponding image
+    if selected_level in img_dict:
+        # Create two columns
+        col1, col2 = st.columns(2)
+
+        # First column: markdown with price
+        col1.markdown(f"""
+            <div style="
+                color: #ea80fc;
+                font-size: 40px;
+                font-weight: bold;
+                text-shadow: 3px 3px 6px #FF69B4;
+                margin-bottom: 50px;
+            ">
+                $ {price:,.2f}
+            </div>
+        """, unsafe_allow_html=True)
+        
+        image_path = 'src/img/best-price.png'
+        image_b64 = get_image_b64(image_path)
+
+        col1.markdown(f"""
+            <div style="margin-left: 50px;">
+                <img src="data:image/png;base64,{image_b64}" width="150" />
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Second column: image
+        image = Image.open(img_dict[selected_level])
+        col2.image(image, width=300) 
