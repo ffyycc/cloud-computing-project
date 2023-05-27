@@ -39,13 +39,13 @@ def present_interface(model,preprocessor):
     sliders = {
         'BEDROOMS': st.sidebar.slider('BEDROOMS', 0, 8, 3, step=1),
         'BATHROOMS': st.sidebar.slider('BATHROOMS', 0, 5, 2, step=1),
-        'GARAGE': st.sidebar.slider('GARAGE', 0, 6, 1, step=1),
-        'LAND_AREA': st.sidebar.slider('LAND_AREA', 0, 5000, 1000, step=50),
-        'FLOOR_AREA': st.sidebar.slider('FLOOR_AREA', 0, 3500, 1000, step=50),
-        'OTHERS_ROOMS_AREA': st.sidebar.slider('OTHERS_ROOMS_AREA', 0, 2000, 1000, step=50),
-        'GARAGE_AREA': st.sidebar.slider('GARAGE_AREA', 0, 400, 200, step=50),
-        'BATHROOMS_AREA': st.sidebar.slider('BATHROOMS_AREA', 0, 500, 200, step=50),
-        'BEDROOMS_AREA': st.sidebar.slider('BEDROOMS_AREA', 0, 1000, 300, step=50),
+        'GARAGE': st.sidebar.slider('GARAGE', 0, 3, 1, step=1),
+        'LAND_AREA': st.sidebar.slider('LAND_AREA', 0, 2000, 1000, step=50),
+        'FLOOR_AREA': st.sidebar.slider('FLOOR_AREA', 0, 1000, 700, step=50),
+        # 'OTHERS_ROOMS_AREA': st.sidebar.slider('OTHERS_ROOMS_AREA', 0, 2000, 1000, step=50),
+        'GARAGE_AREA': st.sidebar.slider('GARAGE_AREA', 0, 250, 150, step=50),
+        'BATHROOMS_AREA': st.sidebar.slider('BATHROOMS_AREA', 0, 250, 150, step=50),
+        'BEDROOMS_AREA': st.sidebar.slider('BEDROOMS_AREA', 0, 200, 150, step=50),
     }
 
     with open('config/suburb.txt', 'r') as f:
@@ -71,7 +71,8 @@ def present_interface(model,preprocessor):
         'NEAREST_SCH': nearest_sch,
         'ADDRESS': ' ',
         'PRICE': 0,
-        'DATE_SOLD': ' '
+        'DATE_SOLD': ' ',
+        'OTHERS_ROOMS_AREA': 1000,
     }
 
     user_info.update(sliders)
