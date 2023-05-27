@@ -12,6 +12,11 @@ import base64
 def get_image_b64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode('utf-8')
+    
+# Load video file
+def get_video_b64(video_path):
+    with open(video_path, "rb") as video_file:
+        return base64.b64encode(video_file.read()).decode('utf-8')
 
 def present_interface(model,preprocessor):
     user_info = {
@@ -55,7 +60,7 @@ def present_interface(model,preprocessor):
         nearest_sch_options = [line.strip() for line in f]
     nearest_sch = st.sidebar.selectbox('NEAREST_SCH', nearest_sch_options)
 
-    ############################################## UI part above ##############################################
+    ############################################## UI Left part above ##############################################
     
     # example ['Landsdale',3,2,2,420,164,'Greenwood Station',-31.81008664,'LANDSDALE CHRISTIAN SCHOOL',41.0,24.6,24.6,30.75]
     # Set the constant values for other features
@@ -79,8 +84,22 @@ def present_interface(model,preprocessor):
     # Now you can use user_input_df for prediction
     price = pipeline.predict(row_df)[0]
     
-    ############################################### UI part below ###############################################
+    ############################################### UI main part below ###############################################
+    # Embed the video using the HTML video tag
+    # Set up a video background
+    video_path = 'src/img/perth_video.mp4'  # replace with your video path
+    video_b64 = get_video_b64(video_path)
+    st.markdown(f"""
+        <video id="myVideo" width="100%" height="300px" controls autoplay muted playsinline loop>
+            <source src="data:video/mp4;base64,{video_b64}" type="video/mp4">
+        </video>
+    """, unsafe_allow_html=True)
+
+
+    
+    
     st.header("Housing Information:")
+    
 
     # Set up some CSS properties
     st.markdown("""
