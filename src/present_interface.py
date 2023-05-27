@@ -6,15 +6,9 @@ from sklearn.compose import ColumnTransformer
 import category_encoders as ce
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
-import pdb
+
 
 def present_interface(model,preprocessor):
-
-    st.title("We can Make House Price Prediction in Perth for You!")
-
-    st.sidebar.header("User Input Parameters")
-
-        
     user_info = {
         'SUBURB': None,
         'BEDROOMS': None,
@@ -79,8 +73,6 @@ def present_interface(model,preprocessor):
 
     # Now you can use user_input_df for prediction
     price = pipeline.predict(row_df)[0]
-
-    print("price:",price)
     
     ############################################### UI part below ###############################################
     st.header("Housing Information:")
