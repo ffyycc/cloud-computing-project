@@ -6,15 +6,19 @@ from sklearn.compose import ColumnTransformer
 import category_encoders as ce
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
-import pdb
+from PIL import Image
+import base64
+
+def get_image_b64(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode('utf-8')
+    
+# Load video file
+def get_video_b64(video_path):
+    with open(video_path, "rb") as video_file:
+        return base64.b64encode(video_file.read()).decode('utf-8')
 
 def present_interface(model,preprocessor):
-
-    st.title("We can Make House Price Prediction in Perth for You!")
-
-    st.sidebar.header("User Input Parameters")
-
-        
     user_info = {
         'SUBURB': None,
         'BEDROOMS': None,
@@ -56,7 +60,7 @@ def present_interface(model,preprocessor):
         nearest_sch_options = [line.strip() for line in f]
     nearest_sch = st.sidebar.selectbox('NEAREST_SCH', nearest_sch_options)
 
-    ############################################## UI part above ##############################################
+    ############################################## UI Left part above ##############################################
     
     # example ['Landsdale',3,2,2,420,164,'Greenwood Station',-31.81008664,'LANDSDALE CHRISTIAN SCHOOL',41.0,24.6,24.6,30.75]
     # Set the constant values for other features
@@ -79,11 +83,23 @@ def present_interface(model,preprocessor):
 
     # Now you can use user_input_df for prediction
     price = pipeline.predict(row_df)[0]
-
-    print("price:",price)
     
-    ############################################### UI part below ###############################################
+    ############################################### UI main part below ###############################################
+    # Embed the video using the HTML video tag
+    # Set up a video background
+    video_path = 'src/img/perth_video.mp4'  # replace with your video path
+    video_b64 = get_video_b64(video_path)
+    st.markdown(f"""
+        <video id="myVideo" width="100%" height="300px" controls autoplay muted playsinline loop>
+            <source src="data:video/mp4;base64,{video_b64}" type="video/mp4">
+        </video>
+    """, unsafe_allow_html=True)
+
+
+    
+    
     st.header("Housing Information:")
+    
 
     # Set up some CSS properties
     st.markdown("""
@@ -117,13 +133,66 @@ def present_interface(model,preprocessor):
 
     # Show house price
     st.header("Predicted House Price: ")
-    st.markdown(f"""
-        <div style="
-            color: #ea80fc;
-            font-size: 40px;
-            font-weight: bold;
-            text-shadow: 3px 3px 6px #FF69B4;
-        ">
-            $ {price:,.2f}
-        </div>
-    """, unsafe_allow_html=True)
+    
+    # Define the levels
+    levels = ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5', 'Level 6', 'Level 7']
+
+    # Define corresponding images
+    img_dict = {
+        'Level 1': 'src/img/level1.png',
+        'Level 2': 'src/img/level2.png',
+        'Level 3': 'src/img/level3.png',
+        'Level 4': 'src/img/level4.png',
+        'Level 5': 'src/img/level5.png',
+        'Level 6': 'src/img/level6.png',
+        'Level 7': 'src/img/level7.png',
+    }
+
+    # Add a selectbox to choose level:
+    if price <= 400000:
+        selected_level = 'Level 1'
+    
+    elif 400000 <= price < 500000:
+        selected_level = 'Level 2'
+    
+    elif 500000 <= price < 600000:
+        selected_level = 'Level 3'
+    elif 600000 <= price < 700000:
+        selected_level = 'Level 4'
+    elif 700000 <= price < 5000000:
+        selected_level = 'Level 5'
+    elif 5000000 <= price < 6500000:
+        selected_level = 'Level 6'
+    else:
+        selected_level = 'Level 7'
+        
+    # Display the corresponding image
+    if selected_level in img_dict:
+        # Create two columns
+        col1, col2 = st.columns(2)
+
+        # First column: markdown with price
+        col1.markdown(f"""
+            <div style="
+                color: #ea80fc;
+                font-size: 40px;
+                font-weight: bold;
+                text-shadow: 3px 3px 6px #FF69B4;
+                margin-bottom: 50px;
+            ">
+                $ {price:,.2f}
+            </div>
+        """, unsafe_allow_html=True)
+        
+        image_path = 'src/img/best-price.png'
+        image_b64 = get_image_b64(image_path)
+
+        col1.markdown(f"""
+            <div style="margin-left: 50px;">
+                <img src="data:image/png;base64,{image_b64}" width="150" />
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Second column: image
+        image = Image.open(img_dict[selected_level])
+        col2.image(image, width=300) 

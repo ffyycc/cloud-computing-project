@@ -53,32 +53,52 @@ def load_config(config_ref: str) -> dict:
 def main():
     config = load_config(CONFIG_REF)
     run_config = config.get("run_config", {})
-    print(run_config)
+
     # Set up output directory for saving artifacts
     artifacts = Path(run_config.get("output", "runs"))
     
-    model_s3_key = config["aws"]["selected_model_key"]
     processor_s3_key = config["aws"]["selected_preprocessor_key"]
     
     @st.cache_resource
-    def load_model():
+    def load_preprocessor():
+        aws.download_s3(BUCKET_NAME, processor_s3_key, artifacts / processor_s3_key)
+        preprocessor = joblib.load(artifacts / processor_s3_key)
+        return preprocessor
+        
+    preprocessor = load_preprocessor()
+    
+    @st.cache_resource
+    def load_model(cur_model_s3_key):
         print("loading artifacts from: ", artifacts.absolute())
         # Download model and preprocessor from S3
-        aws.download_s3(BUCKET_NAME, model_s3_key, artifacts / model_s3_key)
-        aws.download_s3(BUCKET_NAME, processor_s3_key, artifacts / processor_s3_key)
-        
+        aws.download_s3(BUCKET_NAME, cur_model_s3_key, artifacts / cur_model_s3_key)
+     
         # Load model from the downloaded file
         model = joblib.load(artifacts / model_s3_key)
-        preprocessor = joblib.load(artifacts / processor_s3_key)
-        
-        return model, preprocessor
+      
+        return model
+ 
+    st.title("We can Make House Price Prediction in Perth for You!")
+
+    st.sidebar.header("User Input Parameters")
+ 
+    # Sidebar to choose model
+    # Set up the sidebar
+    model_choice = st.sidebar.selectbox(
+        "Choose the model",
+        ("XGBoost", "Random Forest", "Logistic Regression")
+    )
+
+    # Depending on the choice, instantiate the correct model
+    if model_choice == "XGBoost":
+        model_s3_key = config["aws"]["xgboost_model_name"]
+    elif model_choice == "Random Forest":
+        model_s3_key = config["aws"]["random_forest_model_name"]
+    elif model_choice == "Logistic Regression":
+        model_s3_key = config["aws"]["logistic_regression_model_name"]
     
-    model,preprocessor = load_model()
-    
-    # TODO: change hard code here:
-    
-    
-    # TODO: feed user input to scores
+    model= load_model(model_s3_key)
+   
 
     # Present user interface
     pi.present_interface(model,preprocessor)
