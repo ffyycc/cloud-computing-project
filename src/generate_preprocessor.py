@@ -1,10 +1,13 @@
+from typing import List
+import pickle
+import logging
 import category_encoders as ce
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OrdinalEncoder
 from sklearn.preprocessing import MinMaxScaler
-from typing import List
-import pickle
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
 
 def generate_preprocessor(num_cols: List[str], cat_cols: List[str]) -> ColumnTransformer:
     """
@@ -16,7 +19,6 @@ def generate_preprocessor(num_cols: List[str], cat_cols: List[str]) -> ColumnTra
 
     Returns:
         ColumnTransformer: Preprocessor for transforming numerical and categorical features.
-
     """
     # Define the transformer for numerical features
     numerical_transformer = MinMaxScaler(feature_range=(0, 1))
@@ -35,9 +37,23 @@ def generate_preprocessor(num_cols: List[str], cat_cols: List[str]) -> ColumnTra
         ]
     )
 
+    logging.info('Preprocessor generated successfully.')
     return preprocessor
 
+def save_preprocessor(preprocessor: ColumnTransformer, filename: str) -> None:
+    """
+    Save the preprocessor to a file.
 
-def save_preprocessor(preprocessor, filename):
-    with open(filename, 'wb') as f:
-        pickle.dump(preprocessor, f)
+    Args:
+        preprocessor (ColumnTransformer): The preprocessor to save.
+        filename (str): The file to save the preprocessor to.
+
+    Returns:
+        None
+    """
+    try:
+        with open(filename, 'wb') as f:
+            pickle.dump(preprocessor, f)
+        logging.info('Preprocessor saved successfully to %s.', filename)
+    except (IOError, OSError, pickle.PicklingError) as e:
+        logging.error('Failed to save preprocessor: %s', str(e))

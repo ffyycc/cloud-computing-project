@@ -1,7 +1,7 @@
 import logging
+from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
-from pathlib import Path
 
 # configure logging
 logging.basicConfig(filename='pipeline.log', level=logging.INFO,
