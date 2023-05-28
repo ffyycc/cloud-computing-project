@@ -26,7 +26,6 @@ def save_summary_table(all_data: pd.DataFrame, save_dir: Path) -> Path:
     except Exception as err:
         logging.error('Failed to create and save summary table: %s', err)
         raise
-
     return summary_path
 
 
@@ -73,9 +72,8 @@ def save_figures(all_data: pd.DataFrame, config: dict, save_dir: Path) -> List[P
         figs.append(fig)
 
         # Pair plots
-        fig = sns.pairplot(all_data[config['pairplot_columns']], kind="hist")
+        fig = sns.pairplot(all_data[config['pairplot_columns']], kind='hist')
         figs.append(fig)
-
         save_dir.mkdir(parents=True, exist_ok=True)
         for fig, fig_name in zip(figs, fig_names):
             fig_path = save_dir / (fig_name + '.png')

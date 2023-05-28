@@ -1,12 +1,9 @@
 import os
 import logging
-from pathlib import Path
 import boto3
-import pdb
-
+import botocore
 
 logger = logging.getLogger(__name__)
-
 
 def upload_artifacts(artifacts, config):
     """Upload all the artifacts in the specified directory to S3
@@ -29,7 +26,7 @@ def upload_artifacts(artifacts, config):
 
     # Create a boto3 session and S3 client
     session = boto3.Session()
-    s3 = session.client("s3")
+    s3_client = session.client("s3")
 
     # Initialize a list to store the S3 URIs of the uploaded files
     uploaded_uris = []
@@ -45,15 +42,15 @@ def upload_artifacts(artifacts, config):
                 )
 
                 # Upload the file to S3
-                s3.upload_file(Filename=file_path, Bucket=bucket_name, Key=s3_key)
+                s3_client.upload_file(Filename=file_path, Bucket=bucket_name, Key=s3_key)
 
                 # Add the uploaded file's S3 URI to the list
-                uploaded_uri = "s3://%s/%s" % (bucket_name, s3_key)
+                uploaded_uri = f"s3://{bucket_name}/{s3_key}"  # use f-string
                 uploaded_uris.append(uploaded_uri)
 
                 # logger.debug("Successfully uploaded %s to %s", file_path, uploaded_uri)
 
-    except Exception as e:
+    except botocore.exceptions.BotoCoreError as e:  # catch specific exception
         logger.error("Failed to upload files: %s", str(e))
         return []
 
@@ -61,12 +58,26 @@ def upload_artifacts(artifacts, config):
 
     return uploaded_uris
 
+def download_s3(bucket_name: str, s3_key: str, local_file: str) -> None:
+    """
+    Download a file from an AWS S3 bucket.
 
-def download_s3(bucket_name, s3_key, local_file):
-    s3 = boto3.client('s3')
-    
+    Parameters:
+        bucket_name (str): The name of the S3 bucket.
+        s3_key (str): The key of the object to download.
+        local_file (str): The local path where the file will be saved.
+
+    Returns:
+        None
+    """
+    s3_client = boto3.client("s3")
     try:
-        s3.download_file(bucket_name, s3_key, str(local_file))
-        print(f"Download successful. File downloaded from bucket '{bucket_name}' with key '{s3_key}' to '{local_file}'.")
-    except Exception as e:
-        print(f"Download failed. Exception: {e}")
+        s3_client.download_file(bucket_name, s3_key, str(local_file))
+        logger.info(
+        "Download successful. File downloaded from bucket '%s' with key '%s' to '%s'.",
+        bucket_name,
+        s3_key,
+        local_file
+        )
+    except botocore.exceptions.BotoCoreError as e:  # catch specific exception
+        logger.error("Download failed. Exception: %s", e)
