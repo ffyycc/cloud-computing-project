@@ -4,7 +4,6 @@ import datetime
 import logging.config
 from pathlib import Path
 import yaml
-import pandas as pd
 import src.preprocess_data as pp
 import src.clean_data as cd
 import src.analysis as an
@@ -64,7 +63,7 @@ if __name__ == "__main__":
     figures = artifacts / "figures&tables"
     figures.mkdir()  # Replace with your desired directory
     an.save_summary_table(all_data, figures)
-    an.save_figures(all_data, config['analysis'], figures) 
+    an.save_figures(all_data, config["analysis"], figures)
     # clean the data
     cleaned_data = cd.clean_dataset(all_data, config["clean_data"])
     logger.info("Finished cleaning the dataset.")
@@ -75,7 +74,9 @@ if __name__ == "__main__":
     logger.info("Finished generating features.")
     preprocessor = gp.generate_preprocessor(updated_num_cols,updated_cat_cols)
     logger.info("Finished generating preprocessor.")
-    X_train_transformed, X_test_transformed, y_train, y_test, fitted_preprocessor = sd.split_data(features, preprocessor, config["split_data"])
+    X_train_transformed, X_test_transformed, y_train, y_test, fitted_preprocessor = sd.split_data(features,
+                                                                                                  preprocessor,
+                                                                                                  config["split_data"])
     gp.save_preprocessor(fitted_preprocessor, artifacts / "fitted_preprocessor.pkl")
     sd.save_splited_data(X_train_transformed, X_test_transformed, y_train, y_test, data_dir)
     logger.info("Finished splitting the data.")
@@ -94,11 +95,11 @@ if __name__ == "__main__":
     best_model_file_name = "best_model_object_"+best_model_name+".pkl"
     mt.save_model(best_model, artifacts / best_model_file_name)
     for model_name in other_models_name:
-        if model_name == 'Random Forest':
+        if model_name == "Random Forest":
             mt.save_model(rf_model, artifacts / "rf_model_object.pkl")
-        elif model_name == 'XGBoost':
+        elif model_name == "XGBoost":
             mt.save_model(xgb_model, artifacts / "xgb_model_object.pkl")
-        elif model_name == 'Linear Ridge':
+        elif model_name == "Linear Ridge":
             mt.save_model(lr_model, artifacts / "lr_model_object.pkl")
 
     # Model evaluation
@@ -110,8 +111,3 @@ if __name__ == "__main__":
     # Upload all artifacts to S3
     aws_config = config.get("aws")
     aws.upload_artifacts(artifacts, aws_config)
-
-
-
-
-
