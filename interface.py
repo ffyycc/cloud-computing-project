@@ -78,7 +78,7 @@ def main():
       
         return model
  
-    st.title("We can Make House Price Prediction in Perth for You!")
+    st.title("We Can Make House Price Prediction in Perth for You!")
 
     st.sidebar.header("User Input Parameters")
  
