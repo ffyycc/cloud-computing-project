@@ -1,7 +1,8 @@
-import numpy as np
-from sklearn.model_selection import train_test_split
+import logging
 from pathlib import Path
 from typing import Any
+import numpy as np
+from sklearn.model_selection import train_test_split
 
 def split_data(data: Any, preprocessor: Any, config: dict) -> tuple:
     """
@@ -16,21 +17,23 @@ def split_data(data: Any, preprocessor: Any, config: dict) -> tuple:
         tuple: The transformed train and test data along with the corresponding labels.
 
     """
-    y = data[config['target']]
+    y_data = data[config['target']]
 
     # Split the data into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(data, y, test_size=config['test_size'], random_state=config['random_state'])
+    x_train, x_test, y_train, y_test = train_test_split(data, y_data,
+                                                        test_size=config['test_size'],
+                                                        random_state=config['random_state'])
 
     # Fit and transform the training data
-    X_train_transformed = preprocessor.fit_transform(X_train, y_train)
+    x_train_transformed = preprocessor.fit_transform(x_train, y_train)
 
     # Transform the testing data
-    X_test_transformed = preprocessor.transform(X_test)
+    x_test_transformed = preprocessor.transform(x_test)
 
-    return X_train_transformed, X_test_transformed, y_train, y_test, preprocessor
+    return x_train_transformed, x_test_transformed, y_train, y_test, preprocessor
 
-
-def save_splited_data(X_train_transformed: np.ndarray, X_test_transformed: np.ndarray, y_train: np.ndarray, y_test: np.ndarray, data_dir: Path):
+def save_splited_data(x_train_transformed: np.ndarray, x_test_transformed: np.ndarray,
+                      y_train: np.ndarray, y_test: np.ndarray, data_dir: Path) -> None:
     """
     Saves the split data to separate CSV files.
 
@@ -45,9 +48,16 @@ def save_splited_data(X_train_transformed: np.ndarray, X_test_transformed: np.nd
         None
 
     """
-    np.savetxt(data_dir / "X_train_transformed.csv", X_train_transformed, delimiter=",")
-    np.savetxt(data_dir / "X_test_transformed.csv", X_test_transformed, delimiter=",")
-
-    # Assuming y_train and y_test are 1D, we might want to save them in a column format
-    np.savetxt(data_dir / "y_train.csv", y_train, delimiter=",", fmt="%s")
-    np.savetxt(data_dir / "y_test.csv", y_test, delimiter=",", fmt="%s")
+    try:
+        np.savetxt(data_dir / 'X_train_transformed.csv', x_train_transformed, delimiter=',')
+        np.savetxt(data_dir / 'X_test_transformed.csv', x_test_transformed, delimiter=',')
+        # Assuming y_train and y_test are 1D, we might want to save them in a column format
+        np.savetxt(data_dir / 'y_train.csv', y_train, delimiter=',', fmt='%s')
+        np.savetxt(data_dir / 'y_test.csv', y_test, delimiter=',', fmt='%s')
+        logging.info('Split data saved successfully at %s', data_dir)
+    except IOError as e:
+        logging.error('Failed to save split data: %s', e)
+        raise
+    except Exception as e:
+        logging.error('Unexpected error while saving split data: %s', e)
+        raise

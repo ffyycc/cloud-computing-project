@@ -5,7 +5,6 @@ import logging.config
 from pathlib import Path
 import yaml
 import pandas as pd
-
 import src.preprocess_data as pp
 import src.clean_data as cd
 import src.analysis as an
@@ -47,11 +46,9 @@ if __name__ == "__main__":
     now = int(datetime.datetime.now().timestamp())
     artifacts = Path(run_config.get("output", "runs")) / str(now)
     artifacts.mkdir(parents=True)
-    
     # Save config file to artifacts directory for traceability
     config_dir = artifacts / Path(run_config.get("output_config", "config"))
     config_dir.mkdir(parents=True)
-    
     data_dir = artifacts / Path(run_config.get("output_data", "data"))
     data_dir.mkdir(parents=True)
 
@@ -68,21 +65,16 @@ if __name__ == "__main__":
     figures.mkdir()  # Replace with your desired directory
     an.save_summary_table(all_data, figures)
     an.save_figures(all_data, config['analysis'], figures) 
-    
     # clean the data
     cleaned_data = cd.clean_dataset(all_data, config["clean_data"])
     logger.info("Finished cleaning the dataset.")
-    
     # generated features
     features,updated_num_cols,updated_cat_cols = gf.generate_features(cleaned_data, config["generate_features"])
     # Save the features dataset in the disk
     gf.save_features(features, data_dir / "house_features.csv")
     logger.info("Finished generating features.")
-    
     preprocessor = gp.generate_preprocessor(updated_num_cols,updated_cat_cols)
-    
     logger.info("Finished generating preprocessor.")
-
     X_train_transformed, X_test_transformed, y_train, y_test, fitted_preprocessor = sd.split_data(features, preprocessor, config["split_data"])
     gp.save_preprocessor(fitted_preprocessor, artifacts / "fitted_preprocessor.pkl")
     sd.save_splited_data(X_train_transformed, X_test_transformed, y_train, y_test, data_dir)
@@ -92,7 +84,11 @@ if __name__ == "__main__":
     rf_model, rf_par = mt.random_forest_tuning(X_train_transformed, y_train,config["model_tuning"])
     xgb_model, xgb_par = mt.xgboost_tuning(X_train_transformed, y_train,config["model_tuning"])
     lr_model, lr_par = mt.linear_ridge_tuning(X_train_transformed, y_train,config["model_tuning"])
-    metrics_df, best_model, best_model_name, other_models_name = mt.model_comparison(rf_model, xgb_model, lr_model, X_test_transformed, y_test, config["model_tuning"])
+    metrics_df, best_model, best_model_name, other_models_name = mt.model_comparison(rf_model,
+                                                                                     xgb_model,
+                                                                                     lr_model,
+                                                                                     X_test_transformed,
+                                                                                     y_test, config["model_tuning"])
     # Save the metrics and models
     mt.save_metrics(metrics_df, artifacts)
     best_model_file_name = "best_model_object_"+best_model_name+".pkl"
@@ -114,7 +110,6 @@ if __name__ == "__main__":
     # Upload all artifacts to S3
     aws_config = config.get("aws")
     aws.upload_artifacts(artifacts, aws_config)
-
 
 
 
