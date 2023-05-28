@@ -58,7 +58,6 @@ def main() -> None:
     This function loads the configuration, sets up the output directory, 
     loads the preprocessor and model, and presents the user interface.
     """
-    logger.info("Loading configuration...")
     config = load_config(CONFIG_REF)
     run_config = config.get("run_config", {})
 
@@ -73,7 +72,6 @@ def main() -> None:
         Returns:
             object: The preprocessor object.
         """
-        logger.info("Loading preprocessor from S3...")
         aws.download_s3(BUCKET_NAME, processor_s3_key, artifacts_out / processor_s3_key)
         preprocessor = joblib.load(artifacts_out / processor_s3_key)
         return preprocessor
@@ -95,7 +93,6 @@ def main() -> None:
         # Load model from the downloaded file
         model = joblib.load(artifacts_out / model_s3_key)
         return model
-    logger.info("Setting up Streamlit title and sidebar...")
     st.title("We Can Make House Price Prediction in Perth for You!")
     st.sidebar.header("User Input Parameters")
     # Sidebar to choose model
