@@ -1,17 +1,22 @@
-FROM python:3.9-slim
-
+#FROM python:3.9-slim
+FROM --platform=linux/x86_64 python:3.9-slim
 # set working directory
 WORKDIR /app
 
 # copy project files to the container
 COPY src /app/src
 COPY requirements.txt /app/requirements.txt
-COPY pipeline.py /app/pipeline.py
+COPY interface.py /app/interface.py
 COPY config /app/config
 COPY data /app/data
+COPY .streamlit /app/.streamlit
 
 # install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# set the entrypoint
-ENTRYPOINT ["python", "pipeline.py"]
+# Expose port 80 for http traffic
+EXPOSE 80
+
+# Set the command to run the Streamlit application
+CMD ["streamlit", "run", "--server.port=80", "--server.fileWatcherType=none", "interface.py"]
+#CMD ["streamlit","run","interface.py"]

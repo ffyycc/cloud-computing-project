@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 
 artifacts = Path() / "artifacts"
 
-BUCKET_NAME = os.getenv("BUCKET_NAME", "cloud-project-models")
+# BUCKET_NAME = os.getenv("BUCKET_NAME", "group-3-models")
 # ARTIFACTS_PREFIX = os.getenv("ARTIFACTS_PREFIX", "artifacts/")
 CONFIG_REF = os.getenv("CONFIG_REF", "config/config.yml")
 
@@ -60,10 +60,13 @@ def main() -> None:
     """
     config = load_config(CONFIG_REF)
     run_config = config.get("run_config", {})
-
+    bucket_name = config["aws"]["bucket_model_artifacts"]
     # Set up output directory for saving artifacts
     artifacts_out = Path(run_config.get("output", "runs"))
     processor_s3_key = config["aws"]["selected_preprocessor_key"]
+    # Set up output directory for saving artifacts
+    artifacts = Path("artifacts")
+    artifacts.mkdir(parents=True, exist_ok=True)
     @st.cache_resource
     def load_preprocessor() -> object:
         """
@@ -72,7 +75,7 @@ def main() -> None:
         Returns:
             object: The preprocessor object.
         """
-        aws.download_s3(BUCKET_NAME, processor_s3_key, artifacts_out / processor_s3_key)
+        aws.download_s3(bucket_name, processor_s3_key, artifacts_out / processor_s3_key)
         preprocessor = joblib.load(artifacts_out / processor_s3_key)
         return preprocessor
     preprocessor = load_preprocessor()
@@ -89,7 +92,7 @@ def main() -> None:
         """
         logger.info("Loading model from: %s...", artifacts_out.absolute())
         # Download model and preprocessor from S3
-        aws.download_s3(BUCKET_NAME, cur_model_s3_key, artifacts_out / cur_model_s3_key)
+        aws.download_s3(bucket_name, cur_model_s3_key, artifacts_out / cur_model_s3_key)
         # Load model from the downloaded file
         model = joblib.load(artifacts_out / model_s3_key)
         return model

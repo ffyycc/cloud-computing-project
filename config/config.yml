@@ -92,8 +92,8 @@ model_evaluation:
 
 aws:
   upload: True
-  bucket_raw: cloud-project-raw
-  bucket_model_artifacts: cloud-project-models
+  bucket_raw: group-3-raw-data
+  bucket_model_artifacts: cloud-classification-models
   random_forest_model_name: rf_model_object.pkl
   logistic_regression_model_name: lr_model_object.pkl
   xgboost_model_name: best_model_object_XGBoost.pkl
